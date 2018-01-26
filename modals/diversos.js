@@ -84,4 +84,34 @@ module.exports = class ModalDiversos {
 		})
 		return datos
 	}
+
+
+
+	turnar(html){
+		$.confirm({
+			title: 'Seleccione Areas a Turnar',
+			content : html,
+			icon:'fa fa-address-book',
+			type:'blue',
+			columnClass: 'col-md-11 col-md-offset-1',
+			draggable:false,
+			buttons:{
+				confirm:{
+					text:'Aceptar',
+					btnClass:'btn-primary',
+					action:function(){
+						let areas = []
+						 $("input:checkbox:checked").each(function() {
+             				areas.push($(this).val())
+        				});
+						$('input#idTurnado').val(areas)
+					}
+				}
+			}
+
+		})	
+	}
+
+
+
 }

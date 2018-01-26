@@ -23,4 +23,6 @@ volante.form_update()
 
 
 diverso.load_subdocumentos()
-diverso.load_remitentes()	
+diverso.load_remitentes()
+diverso.turnar()
+diverso.form_submit()	

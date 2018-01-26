@@ -41,4 +41,102 @@ module.exports = class Diversos {
 		})
 	}
 
+	turnar(){
+		let self = this
+		$('button#btn-turnar').click(function(e){
+			e.preventDefault()
+			self.load_areas_turnados()
+		})
+	}
+
+	async load_areas_turnados(){
+
+		let datos = await this.load_areas_turnar()
+		let table = this.construc_table_areas(datos)
+		let html = require('./../templates/areas_turnar.html')
+		let tabla = html.replace(':body:',table)
+		diverso.turnar(tabla)
+	}
+
+	construc_table_areas(data){
+
+		let tr = ''
+		$.each(data, function(index, val) {
+			tr += `<tr>
+					<td><input type="checkbox" id="area" value="${data[index].idArea}"></td>
+					<td>${data[index].nombre}</td>
+					</tr>` 
+		});
+
+		return tr
+		
+	}
+
+
+	load_areas_turnar() {
+		
+		let datos = new Promise(resolve =>{
+			$.get({
+				url:'/SIA/juridico/api/areas',
+				success:function(json){
+					resolve(JSON.parse(json))
+				}
+			})
+		})
+		return datos
+	}
+
+	form_submit(){
+		let self = this
+		$('form#diversos').submit(function(e){
+			e.preventDefault()
+			let datos = $(this).serializeArray()
+			
+			let valida_string = self.validate_fields_string(datos)
+			let valida_numbers = self.valida_numbers(datos)
+			let valida_areas = self.valida_areas(datos)
+/*
+			if(valida_string.length > 0 ){
+				let tabla = base.construct_table_errors(valida_string)
+				modal.errors(tabla)
+			
+			} else if (valida_numbers.length > 0) {
+
+				let tabla = base.construct_table_errors(valida_numbers)
+				modal.errors(tabla)
+			
+			} else if(valida_areas.length > 0 ){
+
+				let tabla = base.construct_table_errors(valida_areas)
+				modal.errors(tabla)
+
+			} else {
+				base.new_insert(datos,'VolantesDiversos')
+			}
+*/			
+	base.new_insert(datos,'VolantesDiversos')
+
+		})
+	}
+
+	validate_fields_string(datos){
+		
+		let campos = base.create_fields_validate(datos,['idTipoDocto','idRemitente','extemporaneo'])
+		let validacion = base.valida_string(campos,[20,20,2,50])
+		return validacion
+	}
+
+	valida_numbers(datos){
+		let campos = base.create_fields_validate(datos,['folio','subFolio','idCaracter','idAccion','idSubTipoDocumento','anexos'])
+		let validacion = base.valida_number(campos)
+		return validacion	
+	}
+
+	valida_areas(datos){
+		let campos = base.create_fields_validate(datos,['idTurnado'])
+		let validacion = base.valida_empty(campos)
+		return validacion
+	}
+
+
 }
