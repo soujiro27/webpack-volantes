@@ -54,8 +54,6 @@ module.exports = class Volantes {
 
 			let subDocumento = $('select#subDocumento :selected').text()
 			let documento = $('select#idDocumento :selected').val()
-			console.log(subDocumento)
-			console.log(documento)
 
 			if(documento === 'OFICIO' && subDocumento === 'CONFRONTA' ){
 				
@@ -104,10 +102,35 @@ module.exports = class Volantes {
 
 				let tabla = base.construct_table_errors(valida_numbers)
 				modal.errors(tabla)
+			} else {
+				base.new_insert(datos,'Volantes')
 			}
+
+			
 
 		})
 	}
+
+
+	form_update(){
+		$('form#Volantes-update').submit(function(e){
+			e.preventDefault()
+			let datos = $(this).serializeArray()
+			let validacion = base.valida_empty(datos)
+			
+			if(validacion.length > 0){
+
+				let tabla = base.construct_table_errors(validacion)
+				modal.errors(tabla)
+			
+			} else {
+
+				base.new_update(datos,'Volantes')
+
+			}
+		})
+	}
+
 
 	validate_fields_string(datos){
 		let campos = base.create_fields_validate(datos,['documento','promocion','extemporaneo','idTurnado'])
@@ -140,4 +163,6 @@ module.exports = class Volantes {
 		let validacion = base.valida_number(campos)
 		return validacion	
 	}
+
+
 }
