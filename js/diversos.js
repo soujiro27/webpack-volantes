@@ -90,7 +90,7 @@ module.exports = class Diversos {
 
 			for(let y in check){
 
-				if(check[y].receptor == data[x].idArea){
+				if(check[y].idAreaRecepcion == data[x].idArea){
 
 					tr += ` disabled`
 				}
