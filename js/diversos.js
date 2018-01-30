@@ -49,6 +49,27 @@ module.exports = class Diversos {
 		})
 	}
 
+
+	turnar_update(){
+		let self = this
+		$('button#btn-turnar-update').click(function(e){
+			e.preventDefault()
+			self.load_areas_update()
+		})
+	}
+
+
+	async load_areas_update(){
+
+		let idVolante = $('input#idVolante').val()
+		let check = await this.load_areas_turnar_update(idVolante)
+		let datos = await this.load_areas_turnar()
+		let table =  this.construct_table_update_turnos(check,datos)
+		let html = require('./../templates/areas_turnar.html')
+		let tabla = html.replace(':body:',table)
+		diverso.turnar(tabla)
+	}
+
 	async load_areas_turnados(){
 
 		let datos = await this.load_areas_turnar()
@@ -56,6 +77,31 @@ module.exports = class Diversos {
 		let html = require('./../templates/areas_turnar.html')
 		let tabla = html.replace(':body:',table)
 		diverso.turnar(tabla)
+	}
+
+	construct_table_update_turnos(check,data){
+
+		let tr = ''
+		
+		for(let x in data){
+
+			tr += `<tr>
+					<td><input type="checkbox" id="area" value="${data[x].idArea}" `
+
+			for(let y in check){
+
+				if(check[y].receptor == data[x].idArea){
+
+					tr += ` disabled`
+				}
+
+			}
+
+			 tr  += ` ></td><td>${data[x].nombre}</td></tr>` 
+
+		}
+
+		return tr
 	}
 
 	construc_table_areas(data){
@@ -86,6 +132,23 @@ module.exports = class Diversos {
 		return datos
 	}
 
+	load_areas_turnar_update(idVolante) {
+		
+		let datos = new Promise(resolve =>{
+			$.get({
+				url:'/SIA/juridico/api/areas/update',
+				data:{
+					idVolante
+				},
+				success:function(json){
+					resolve(JSON.parse(json))
+				}
+			})
+		})
+		return datos
+	}
+
+
 	form_submit(){
 		let self = this
 		$('form#diversos').submit(function(e){
@@ -95,7 +158,7 @@ module.exports = class Diversos {
 			let valida_string = self.validate_fields_string(datos)
 			let valida_numbers = self.valida_numbers(datos)
 			let valida_areas = self.valida_areas(datos)
-/*
+
 			if(valida_string.length > 0 ){
 				let tabla = base.construct_table_errors(valida_string)
 				modal.errors(tabla)
@@ -113,10 +176,19 @@ module.exports = class Diversos {
 			} else {
 				base.new_insert(datos,'VolantesDiversos')
 			}
-*/			
-	base.new_insert(datos,'VolantesDiversos')
 
 		})
+	}
+
+
+	form_update(){
+
+		$('form#diversos-udpate').submit(function(e){
+			e.preventDefault()
+			let datos = $(this).serializeArray()
+			base.new_update(datos,'VolantesDiversos')
+		})
+
 	}
 
 	validate_fields_string(datos){
